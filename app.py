@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-#from flask_ngrok import run_with_ngrok
+from flask_ngrok import run_with_ngrok
 import pandas as pd
 import pickle
 app = Flask(__name__)
-#run_with_ngrok(app)   #starts ngrok when the app is run
+run_with_ngrok(app)   #starts ngrok when the app is run
 model=pickle.load(open('model.pkl','rb'))
 @app.route("/")
 def hello():
@@ -11,6 +11,7 @@ def hello():
 
 @app.route("/ask", methods=['POST'])
 def ask():
+  client_type=''
   primaryAccountNumber = int(request.form['a'])
   deviceId= int(request.form['b'])
   issuerId= int(request.form['c'])
@@ -33,6 +34,12 @@ def ask():
   Active= int(request.form['t'])
   data1 = [[primaryAccountNumber, deviceId, issuerId, DebitCards_Number, ZipCode, Amount, CardExpiryDate, CardCvv2Value, TransactionId, Pan_Number, CompanyId, BankId, TransactionLimits, defaultCurrencyIsoCode, enterpriseId, industryCode, businessRegistrationNumber, bankAccountNumber, taxId,  Active]]
   #print(data1)
+  if bankAccountNumber == 0:
+    client_type = "Individual transaction"
+  elif bankAccountNumber == 1:
+    client_type = "Company or business transaction"
+  else:
+    client_type = "Wrong / Invalid Option"
   df = pd.DataFrame(data1,columns =['primaryAccountNumber',
                                     'deviceId',
                                     'issuerId',
@@ -55,10 +62,18 @@ def ask():
                                     'CompanyProfile Active'])
   #print(df)
   res = model.predict(df)
+  res1 = int(model.score(df,res))*100
+  #print(res1)
   #print(res)
-  out = "<h1> The result is {}</h1>".format(int(res[0]))
+  op = ''
+  if int(res[0]) == 0:
+    op = "Not Fraud"
+  else:
+    op = "Fraud"
+  out = "<h1> The type of the client is : <b><font color='red'>{}</font></b> <br /> The Possibility (Accuracy) of <font color='blue'>{}</font> is : <b><font color='red'>{}</font>%</b> <br /> The result is : <b><font color='red'>{} - {}</font></b></h1>".format(client_type,op,res1,int(res[0]),op)
   return out
   #return jsonify({'status':'OK','answer':bot_response})
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1",port=5001)
+    #app.run()
