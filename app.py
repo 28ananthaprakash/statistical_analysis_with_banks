@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-from flask_ngrok import run_with_ngrok
+#from flask_ngrok import run_with_ngrok
 import pandas as pd
 import pickle
 app = Flask(__name__)
-run_with_ngrok(app)   #starts ngrok when the app is run
+#run_with_ngrok(app)   #starts ngrok when the app is run
 model=pickle.load(open('model.pkl','rb'))
 @app.route("/")
 def hello():
