@@ -64,7 +64,7 @@ def ask():
   res = model.predict(df)
   res1 = model.predict_proba(df)[0]
   
-  out = "<h1> The type of the client is : <b><font color='red'>{}</font></b> <br /> The Possibility (Accuracy) of being fraud is : <b><font color='red'>{}</font>%</b> <br /> The Possibility (Accuracy) of being not being fraud is : <b><font color='red'>{}</font>%</b><br /> </h1>".format(client_type,float(res1[0]*100),float(res1[1]*100))
+  out = "<h1> The type of the client is : <b><font color='red'>{}</font></b> <br /> The Possibility (Accuracy) of not being fraud is : <b><font color='red'>{}</font>%</b> <br /> The Possibility (Accuracy) of being being fraud is : <b><font color='red'>{}</font>%</b><br /> </h1>".format(client_type,float(res1[0]*100),float(res1[1]*100))
   return out
   #return jsonify({'status':'OK','answer':bot_response})
 
