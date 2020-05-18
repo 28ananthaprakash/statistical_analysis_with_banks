@@ -62,15 +62,9 @@ def ask():
                                     'CompanyProfile Active'])
   #print(df)
   res = model.predict(df)
-  res1 = int(model.score(df,res))*100
-  #print(res1)
-  #print(res)
-  op = ''
-  if int(res[0]) == 0:
-    op = "Not Fraud"
-  else:
-    op = "Fraud"
-  out = "<h1> The type of the client is : <b><font color='red'>{}</font></b> <br /> The Possibility (Accuracy) of <font color='blue'>{}</font> is : <b><font color='red'>{}</font>%</b> <br /> The result is : <b><font color='red'>{} - {}</font></b></h1>".format(client_type,op,res1,int(res[0]),op)
+  res1 = model.predict_proba(df)[0]
+  
+  out = "<h1> The type of the client is : <b><font color='red'>{}</font></b> <br /> The Possibility (Accuracy) of being fraud is : <b><font color='red'>{}</font>%</b> <br /> The Possibility (Accuracy) of being not being fraud is : <b><font color='red'>{}</font>%</b><br /> </h1>".format(client_type,float(res1[0]*100),float(res1[1]*100))
   return out
   #return jsonify({'status':'OK','answer':bot_response})
 
